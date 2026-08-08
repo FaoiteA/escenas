@@ -680,6 +680,12 @@ function startListening() {
   }, 150);
 }
 
+function stopListening() {
+  if (!recognition) return;
+  try { recognition.stop(); } catch {}
+  // onend handler will set listening false and render
+}
+
 function skipTurn() {
   const scene = currentScene();
   if (!scene) return;
@@ -954,10 +960,10 @@ function renderPractice(scene) {
     <div class="mic-bar">
       <div class="voice-status">${esc(state.voiceInfo)}</div>
       <button class="mic-btn ${state.listening ? 'listening' : ''}"
-              ${state.listening || !sttSupported || !isUserTurn ? 'disabled' : ''}
-              onclick="startListening()">
+              ${!sttSupported || (!state.listening && !isUserTurn) ? 'disabled' : ''}
+              onclick="${state.listening ? 'stopListening()' : 'startListening()'}">
         <span class="mic-dot">${iconMic}</span>
-        ${state.listening ? 'Listening…' : !sttSupported ? 'Voice not supported' : isUserTurn ? 'Speak Spanish' : 'Waiting…'}
+        ${state.listening ? 'Tap to stop' : !sttSupported ? 'Voice not supported' : isUserTurn ? 'Speak Spanish' : 'Waiting…'}
       </button>
     </div>
   `;
