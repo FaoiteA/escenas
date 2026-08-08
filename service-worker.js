@@ -1,7 +1,7 @@
 /* Escenas — Service Worker
    Bump CACHE_VERSION whenever you change any cached file to force update. */
 
-const CACHE_VERSION = 'escenas-v1';
+const CACHE_VERSION = 'escenas-v2';
 const SHELL_FILES = [
   './',
   './index.html',

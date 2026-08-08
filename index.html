@@ -668,8 +668,27 @@ function setupRecognition() {
 
 function startListening() {
   if (!recognition) return;
-  setState({ listening: true });
-  try { recognition.start(); } catch { setState({ listening: false }); }
+  try { recognition.abort(); } catch {}
+  window.speechSynthesis?.cancel();  // stop bot audio so mic doesn't pick it up
+  setTimeout(() => {
+    setState({ listening: true });
+    try { recognition.start(); }
+    catch (e) {
+      console.log('Recognition start failed:', e);
+      setState({ listening: false });
+    }
+  }, 150);
+}
+
+function skipTurn() {
+  const scene = currentScene();
+  if (!scene) return;
+  const turn = scene.dialogue[state.step];
+  if (!turn || turn.speaker !== 'you') return;
+  state.messages.push({ role: 'user', spanish: '(skipped)', matched: null, step: state.step, skipped: true });
+  state.step++;
+  render();
+  afterBotLineContinue();
 }
 
 /* ============================================================
@@ -768,9 +787,7 @@ function startPractice() {
   state.messages = [];
   state.attempts = {};
   state.completed = false;
-  render();
-  // kick off first bot line
-  setTimeout(() => advanceToNextUserTurn(), 200);
+  advanceToNextUserTurn();
 }
 
 function retryPractice() {
@@ -894,6 +911,22 @@ function renderLesson(scene) {
 function renderPractice(scene) {
   if (state.completed) return renderComplete(scene);
 
+  const notStarted = state.messages.length === 0;
+
+  if (notStarted) {
+    return `
+      <div class="tab-body">
+        <div class="lesson-scenario">
+          <p>${esc(scene.scenario)}</p>
+        </div>
+        <div style="margin-top:24px;">
+          <button class="start-practice" onclick="beginConversation()">Start conversation →</button>
+        </div>
+        <div class="voice-status" style="margin-top:16px;">${esc(state.voiceInfo)}</div>
+      </div>
+    `;
+  }
+
   const currentTurn = scene.dialogue[state.step];
   const isUserTurn = currentTurn && currentTurn.speaker === 'you';
   const attempts = state.attempts[state.step] || 0;
@@ -902,12 +935,7 @@ function renderPractice(scene) {
   return `
     <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
     <div class="tab-body" id="chat-body">
-      ${state.messages.length === 0 ? `
-        <div class="lesson-scenario">
-          <p>${esc(scene.scenario)}</p>
-        </div>
-      ` : ''}
-      ${state.messages.map((m, i) => renderMessage(m)).join('')}
+      ${state.messages.map(m => renderMessage(m)).join('')}
       ${isUserTurn ? `
         <div class="turn-hint">
           <div class="turn-hint-label">Your turn</div>
@@ -916,6 +944,9 @@ function renderPractice(scene) {
             <div class="turn-hint-example">Try: <em>${esc(currentTurn.exampleEs)}</em>
               <button class="vocab-play" style="display:inline-flex;margin-left:8px;vertical-align:middle;" onclick="speak(${jsStr(currentTurn.exampleEs)})" aria-label="Play example">${iconPlay}</button>
             </div>
+          ` : ''}
+          ${attempts >= 2 ? `
+            <button onclick="skipTurn()" style="margin-top:10px;background:transparent;border:1px solid rgba(107,142,90,0.4);color:var(--sage);border-radius:999px;padding:6px 14px;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;">Skip this line →</button>
           ` : ''}
         </div>
       ` : ''}
@@ -926,7 +957,7 @@ function renderPractice(scene) {
               ${state.listening || !sttSupported || !isUserTurn ? 'disabled' : ''}
               onclick="startListening()">
         <span class="mic-dot">${iconMic}</span>
-        ${state.listening ? 'Listening…' : !sttSupported ? 'Voice not supported on this browser' : isUserTurn ? 'Speak Spanish' : 'Waiting…'}
+        ${state.listening ? 'Listening…' : !sttSupported ? 'Voice not supported' : isUserTurn ? 'Speak Spanish' : 'Waiting…'}
       </button>
     </div>
   `;
@@ -934,6 +965,15 @@ function renderPractice(scene) {
 
 function renderMessage(m) {
   if (m.role === 'user') {
+    if (m.skipped) {
+      return `
+        <div class="msg-row user">
+          <div class="bubble" style="background:transparent;color:var(--clay);border:1px dashed rgba(138,58,46,0.35);">
+            <div class="bubble-text" style="font-size:13px;font-style:italic;">Skipped</div>
+          </div>
+        </div>
+      `;
+    }
     const cls = m.matched ? 'matched' : 'miss';
     return `
       <div class="msg-row user">
@@ -1010,12 +1050,14 @@ function goHome() {
   window.speechSynthesis?.cancel();
   setState({ view: 'home', sceneId: null, step: 0, messages: [], attempts: {}, completed: false });
 }
-function setTab(t) {
-  setState({ tab: t });
-  // Kick off practice if switching in and nothing has started yet
-  if (t === 'practice' && state.messages.length === 0 && !state.completed) {
-    startPractice();
-  }
+function setTab(t) { setState({ tab: t }); }
+
+function beginConversation() {
+  state.step = 0;
+  state.messages = [];
+  state.attempts = {};
+  state.completed = false;
+  advanceToNextUserTurn();
 }
 
 /* ============================================================
