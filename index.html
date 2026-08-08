@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#C7345B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Escenas">
+<title>Escenas · Spanish through everyday moments</title>
+
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icons/favicon.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
+<style>
+  :root {
+    --cream: #F5EDE0;
+    --paper: #FBF7F0;
+    --ink: #1F1A24;
+    --rose: #C7345B;
+    --ochre: #D89A34;
+    --clay: #8A3A2E;
+    --sage: #6B8E5A;
+    --sage-bg: #E8EFE2;
+    --shadow: 0 1px 2px rgba(31,26,36,0.06);
+    --serif: Georgia, "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  #app { height: 100dvh; display: flex; flex-direction: column; }
+  .screen { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* Header */
+  header {
+    padding: 22px 20px 16px;
+    background: var(--paper);
+    border-bottom: 1px solid rgba(31,26,36,0.08);
+    flex-shrink: 0;
+  }
+  .brand { display: flex; align-items: baseline; gap: 2px; }
+  .brand-mark { font-family: var(--serif); font-style: italic; color: var(--rose); font-size: 28px; }
+  .brand h1 { font-family: var(--serif); font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
+  .brand-sub {
+    color: var(--clay);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .back-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .icon-btn {
+    background: transparent; border: none; padding: 8px;
+    color: var(--ink); opacity: 0.6; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .icon-btn svg { width: 20px; height: 20px; }
+  .test-voice-btn {
+    background: var(--rose); color: var(--cream);
+    border: none; border-radius: 999px; padding: 8px 14px;
+    font-family: inherit; font-size: 12px; font-weight: 500; cursor: pointer;
+    letter-spacing: 0.02em;
+  }
+
+  /* Home */
+  .home-body { flex: 1; overflow-y: auto; padding: 20px; }
+  .home-intro {
+    font-family: var(--serif); font-size: 19px; line-height: 1.4;
+    color: var(--ink); margin-bottom: 6px; letter-spacing: -0.01em;
+  }
+  .home-intro em { color: var(--rose); font-style: italic; }
+  .home-sub { color: var(--clay); font-size: 13px; margin-bottom: 22px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .card {
+    background: var(--paper); border-radius: 14px;
+    padding: 16px 14px 14px; box-shadow: var(--shadow);
+    cursor: pointer; position: relative; text-align: left;
+    border: none; font-family: inherit; transition: transform 0.12s;
+  }
+  .card:active { transform: scale(0.97); }
+  .card-num {
+    position: absolute; top: 10px; right: 12px;
+    font-family: var(--serif); font-style: italic; font-size: 12px;
+    color: var(--ochre); letter-spacing: 0.05em;
+  }
+  .card-emoji { font-size: 26px; margin-bottom: 8px; display: block; }
+  .card-title-es { font-family: var(--serif); font-size: 16px; color: var(--ink); letter-spacing: -0.01em; line-height: 1.2; }
+  .card-title-en { color: var(--clay); font-size: 11px; margin-top: 4px; letter-spacing: 0.02em; }
+
+  /* Scene */
+  .scene-header-body { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px; }
+  .scene-emoji { font-size: 32px; }
+  .scene-title { font-family: var(--serif); font-size: 24px; letter-spacing: -0.02em; margin-top: 4px; }
+  .scene-sub { color: var(--clay); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
+
+  .tabs {
+    display: flex; gap: 4px; padding: 4px;
+    background: rgba(31,26,36,0.05); border-radius: 999px;
+    margin: 16px 20px 0; flex-shrink: 0;
+  }
+  .tab {
+    flex: 1; padding: 10px; border: none; background: transparent;
+    border-radius: 999px; font-family: inherit; font-size: 13px; font-weight: 500;
+    color: var(--ink); cursor: pointer; letter-spacing: 0.02em;
+  }
+  .tab.active { background: var(--ink); color: var(--cream); }
+
+  .tab-body { flex: 1; overflow-y: auto; padding: 20px; }
+
+  /* Lesson */
+  .lesson-scenario {
+    background: var(--paper); padding: 16px; border-radius: 12px;
+    box-shadow: var(--shadow); margin-bottom: 24px;
+    border-left: 3px solid var(--rose);
+  }
+  .lesson-scenario p { font-family: var(--serif); font-size: 15px; line-height: 1.55; color: var(--ink); font-style: italic; }
+  .section-label {
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ochre); font-weight: 700; margin-bottom: 10px;
+  }
+  .vocab-list, .phrases-list { list-style: none; margin-bottom: 24px; }
+  .vocab-item {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 10px 0; border-bottom: 1px solid rgba(31,26,36,0.06); gap: 12px;
+  }
+  .vocab-item:last-child { border-bottom: none; }
+  .vocab-es { font-family: var(--serif); font-size: 16px; color: var(--ink); }
+  .vocab-en { color: var(--clay); font-size: 13px; text-align: right; }
+  .vocab-play {
+    background: var(--cream); border: none; border-radius: 999px;
+    width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+    color: var(--rose); cursor: pointer; flex-shrink: 0;
+  }
+  .vocab-play svg { width: 12px; height: 12px; }
+  .vocab-left { display: flex; align-items: center; gap: 10px; flex: 1; }
+  .phrase-item {
+    background: var(--paper); border-radius: 10px; padding: 12px 14px;
+    margin-bottom: 8px; box-shadow: var(--shadow);
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;
+  }
+  .phrase-text { flex: 1; }
+  .phrase-es { font-family: var(--serif); font-size: 15px; color: var(--ink); line-height: 1.3; }
+  .phrase-en { color: var(--clay); font-size: 12px; margin-top: 4px; }
+  .tip {
+    background: #FDF3E0; border-left: 3px solid var(--ochre);
+    padding: 12px 14px; border-radius: 6px; margin-top: 8px;
+  }
+  .tip-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ochre); font-weight: 700; }
+  .tip-text { font-size: 13px; margin-top: 4px; line-height: 1.5; color: var(--ink); }
+  .start-practice {
+    width: 100%; padding: 14px; margin-top: 24px;
+    background: var(--rose); color: var(--cream);
+    border: none; border-radius: 12px; font-family: inherit;
+    font-size: 15px; font-weight: 500; letter-spacing: 0.02em; cursor: pointer;
+  }
+
+  /* Practice / chat */
+  .progress-bar {
+    height: 3px; background: rgba(31,26,36,0.08); margin: 0 20px 12px; border-radius: 3px; overflow: hidden;
+    flex-shrink: 0;
+  }
+  .progress-fill { height: 100%; background: var(--rose); transition: width 0.3s ease; }
+
+  .msg-row { display: flex; margin-bottom: 12px; }
+  .msg-row.user { justify-content: flex-end; }
+  .msg-row.assistant { justify-content: flex-start; }
+  .bubble { max-width: 82%; padding: 12px 14px; border-radius: 18px; position: relative; }
+  .user .bubble { background: var(--ink); color: var(--cream); border-bottom-right-radius: 4px; }
+  .user .bubble.matched { background: var(--sage); }
+  .user .bubble.miss { background: var(--ink); border: 1px dashed rgba(199,52,91,0.5); }
+  .assistant .bubble { background: var(--paper); color: var(--ink); border-bottom-left-radius: 4px; box-shadow: var(--shadow); }
+  .bubble-text { font-family: var(--serif); font-size: 16px; line-height: 1.4; }
+  .bubble-actions { display: flex; gap: 6px; margin-top: 10px; }
+  .bubble-btn {
+    background: var(--cream); border: none; border-radius: 999px;
+    padding: 6px 10px; font-size: 11px; font-weight: 500; color: var(--clay);
+    cursor: pointer; letter-spacing: 0.02em; display: flex; align-items: center; gap: 4px;
+  }
+  .bubble-btn svg { width: 12px; height: 12px; }
+  .bubble-tx {
+    color: var(--clay); font-size: 13px; margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid var(--cream); font-style: italic;
+  }
+  .miss-tag {
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--rose); font-weight: 700; margin-top: 6px;
+  }
+
+  .turn-hint {
+    background: var(--sage-bg); border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+  .turn-hint-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sage); font-weight: 700; }
+  .turn-hint-text { font-family: var(--serif); font-size: 15px; margin-top: 4px; color: var(--ink); line-height: 1.35; }
+  .turn-hint-example {
+    margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(107,142,90,0.35);
+    font-size: 12px; color: var(--sage);
+  }
+  .turn-hint-example em { font-family: var(--serif); font-size: 14px; color: var(--ink); font-style: italic; }
+
+  /* Mic bar */
+  .mic-bar { padding: 10px 20px 20px; background: var(--cream); flex-shrink: 0; }
+  .voice-status { text-align: center; font-size: 11px; color: var(--clay); opacity: 0.7; margin-bottom: 8px; min-height: 14px; }
+  .mic-btn {
+    width: 100%; padding: 14px; background: var(--ink); color: var(--cream);
+    border: none; border-radius: 16px; font-family: inherit;
+    font-size: 15px; font-weight: 500; letter-spacing: 0.02em;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .mic-btn:disabled { opacity: 0.4; }
+  .mic-btn.listening { background: var(--rose); }
+  .mic-dot {
+    width: 32px; height: 32px; border-radius: 999px; background: var(--rose);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .mic-btn.listening .mic-dot { background: var(--cream); animation: pulse 1.4s ease-in-out infinite; }
+  .mic-dot svg { width: 16px; height: 16px; color: var(--cream); }
+  .mic-btn.listening .mic-dot svg { color: var(--rose); }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.15); opacity: 0.7; }
+  }
+
+  /* Completion screen */
+  .complete-body {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px 24px; text-align: center;
+  }
+  .complete-mark {
+    font-family: var(--serif); font-style: italic;
+    color: var(--rose); font-size: 56px; line-height: 1;
+  }
+  .complete-title { font-family: var(--serif); font-size: 28px; margin-top: 16px; letter-spacing: -0.02em; }
+  .complete-sub { color: var(--clay); font-size: 13px; margin-top: 6px; }
+  .stars { display: flex; gap: 6px; margin-top: 24px; }
+  .star { font-size: 32px; color: rgba(31,26,36,0.15); }
+  .star.on { color: var(--ochre); }
+  .score-detail {
+    background: var(--paper); border-radius: 12px; padding: 16px 20px;
+    margin-top: 24px; box-shadow: var(--shadow); width: 100%; max-width: 320px;
+  }
+  .score-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
+  .score-row strong { color: var(--ink); font-weight: 600; }
+  .score-row span { color: var(--clay); }
+  .complete-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 320px; margin-top: 24px; }
+  .btn-primary {
+    padding: 14px; background: var(--rose); color: var(--cream);
+    border: none; border-radius: 12px; font-family: inherit;
+    font-size: 15px; font-weight: 500; letter-spacing: 0.02em; cursor: pointer;
+  }
+  .btn-secondary {
+    padding: 14px; background: transparent; color: var(--ink);
+    border: 1px solid rgba(31,26,36,0.15); border-radius: 12px; font-family: inherit;
+    font-size: 15px; font-weight: 500; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ============================================================
+   SCENES — Add more here to grow the app
+   Each scene has dialogue: alternating {speaker:'them'} and {speaker:'you'} turns.
+   'you' turns need: hint (English prompt), expected (array of key phrases to match), exampleEs (a good answer)
+   ============================================================ */
+const SCENES = [
+  {
+    id: 'cafe', emoji: '☕', titleEs: 'En el café', titleEn: 'At the café',
+    scenario: 'Entras en un café en Madrid. Quieres un café y algo para desayunar.',
+    vocab: [
+      { es: 'un café con leche', en: 'coffee with milk' },
+      { es: 'un cortado', en: 'small coffee w/ splash of milk' },
+      { es: 'una tostada', en: 'a piece of toast' },
+      { es: 'un croissant', en: 'a croissant' },
+      { es: 'para llevar', en: 'to take away' },
+      { es: 'la cuenta', en: 'the bill' },
+    ],
+    phrases: [
+      { es: 'Un café con leche, por favor.', en: 'A coffee with milk, please.' },
+      { es: '¿Me pone también una tostada?', en: 'Can you also bring me a toast?' },
+      { es: '¿Cuánto es?', en: 'How much is it?' },
+      { es: 'La cuenta, por favor.', en: 'The bill, please.' },
+    ],
+    tip: 'In Spain, coffee at the bar (la barra) is cheaper than at a table. Locals often stand and drink it in a few minutes.',
+    dialogue: [
+      { speaker: 'them', es: 'Hola, buenos días. ¿Qué le pongo?', en: 'Hello, good morning. What can I get you?' },
+      { speaker: 'you', hint: 'Order a coffee with milk', expected: ['café con leche', 'cafe con leche', 'cortado', 'café solo'], exampleEs: 'Un café con leche, por favor.' },
+      { speaker: 'them', es: 'Muy bien. ¿Algo para comer?', en: 'Very well. Anything to eat?' },
+      { speaker: 'you', hint: 'Order a toast — or say nothing else', expected: ['tostada', 'croissant', 'nada más', 'nada mas', 'solo eso', 'sólo eso'], exampleEs: 'Sí, una tostada también.' },
+      { speaker: 'them', es: '¿Para tomar aquí o para llevar?', en: 'To have here or to take away?' },
+      { speaker: 'you', hint: 'Say here — or to take away', expected: ['aquí', 'aqui', 'para llevar', 'aquí mismo'], exampleEs: 'Para tomar aquí, gracias.' },
+      { speaker: 'them', es: 'Perfecto. Son tres euros con cincuenta.', en: 'Perfect. That\'s three fifty.' },
+      { speaker: 'you', hint: 'Say here you go / paying by card', expected: ['aquí tiene', 'aqui tiene', 'tarjeta', 'efectivo', 'toma'], exampleEs: 'Aquí tiene. Con tarjeta.' },
+      { speaker: 'them', es: 'Gracias. Que tenga un buen día.', en: 'Thank you. Have a good day.' },
+      { speaker: 'you', hint: 'Say thanks and goodbye', expected: ['gracias', 'igualmente', 'adiós', 'adios', 'hasta luego'], exampleEs: 'Gracias, igualmente.' },
+    ],
+  },
+
+  {
+    id: 'taxi', emoji: '🚕', titleEs: 'Coger un taxi', titleEn: 'Taking a taxi',
+    scenario: 'Es tarde y quieres volver al hotel. Paras un taxi en la calle.',
+    vocab: [
+      { es: 'el aeropuerto', en: 'the airport' },
+      { es: 'la estación', en: 'the station' },
+      { es: 'a la derecha', en: 'to the right' },
+      { es: 'a la izquierda', en: 'to the left' },
+      { es: 'recto', en: 'straight ahead' },
+      { es: 'un recibo', en: 'a receipt' },
+    ],
+    phrases: [
+      { es: 'Al hotel Meliá, por favor.', en: 'To the Meliá hotel, please.' },
+      { es: '¿Cuánto cuesta al aeropuerto?', en: 'How much to the airport?' },
+      { es: 'Aquí está bien, gracias.', en: 'Here is fine, thank you.' },
+      { es: '¿Me da un recibo?', en: 'Can I have a receipt?' },
+    ],
+    tip: 'Official Spanish taxis have a green light on the roof when they\'re free ("libre").',
+    dialogue: [
+      { speaker: 'them', es: 'Buenas tardes, ¿a dónde vamos?', en: 'Good afternoon, where are we going?' },
+      { speaker: 'you', hint: 'Say you want to go to the airport', expected: ['aeropuerto', 'al aeropuerto', 'hotel', 'estación', 'estacion', 'centro'], exampleEs: 'Al aeropuerto, por favor.' },
+      { speaker: 'them', es: 'Muy bien. Póngase el cinturón, por favor.', en: 'Very well. Put on your seatbelt, please.' },
+      { speaker: 'you', hint: 'Say OK / no problem', expected: ['vale', 'de acuerdo', 'sí', 'si', 'claro', 'gracias'], exampleEs: 'Vale, gracias.' },
+      { speaker: 'them', es: '¿Está de vacaciones o viene por trabajo?', en: 'Are you on holiday or here for work?' },
+      { speaker: 'you', hint: 'Say holiday / work / tourism', expected: ['vacaciones', 'trabajo', 'turismo', 'de visita', 'negocios'], exampleEs: 'Estoy de vacaciones.' },
+      { speaker: 'them', es: 'Muy bien. Estamos llegando. ¿Le viene bien aquí?', en: 'Great. We\'re arriving. Is here OK?' },
+      { speaker: 'you', hint: 'Say here is fine — and ask for a receipt', expected: ['aquí está bien', 'aqui esta bien', 'sí', 'recibo', 'un recibo'], exampleEs: 'Sí, aquí está bien. ¿Me da un recibo?' },
+      { speaker: 'them', es: 'Claro. Son doce euros con cincuenta.', en: 'Of course. That\'s twelve fifty.' },
+      { speaker: 'you', hint: 'Say here you go / paying by card', expected: ['aquí tiene', 'aqui tiene', 'tarjeta', 'efectivo', 'quédese', 'quedese'], exampleEs: 'Aquí tiene. Quédese con el cambio.' },
+    ],
+  },
+
+  {
+    id: 'restaurante', emoji: '🍽️', titleEs: 'En el restaurante', titleEn: 'At the restaurant',
+    scenario: 'Es tu primera noche en Sevilla. Entras en un restaurante para cenar.',
+    vocab: [
+      { es: 'una mesa para dos', en: 'a table for two' },
+      { es: 'la carta', en: 'the menu' },
+      { es: 'el primer plato', en: 'the starter' },
+      { es: 'el segundo plato', en: 'the main' },
+      { es: 'el postre', en: 'dessert' },
+      { es: 'estaba delicioso', en: 'it was delicious' },
+    ],
+    phrases: [
+      { es: '¿Tienen mesa para dos?', en: 'Do you have a table for two?' },
+      { es: '¿Qué recomienda?', en: 'What do you recommend?' },
+      { es: 'Yo tomo el pescado.', en: 'I\'ll have the fish.' },
+      { es: 'La cuenta, cuando pueda.', en: 'The bill, when you can.' },
+    ],
+    tip: 'Spaniards eat dinner late — 21:00 or later is normal. Ask for "la carta" (menu), not "el menú" (which often means the set meal).',
+    dialogue: [
+      { speaker: 'them', es: 'Buenas noches. ¿Tienen reserva?', en: 'Good evening. Do you have a reservation?' },
+      { speaker: 'you', hint: 'Say no — ask for a table for two', expected: ['no', 'mesa para dos', 'tiene mesa', 'para dos'], exampleEs: 'No, ¿tienen mesa para dos?' },
+      { speaker: 'them', es: 'Sí, síganme. Aquí tienen la carta. ¿Qué van a beber?', en: 'Yes, follow me. Here\'s the menu. What will you drink?' },
+      { speaker: 'you', hint: 'Order water and wine (or a beer)', expected: ['agua', 'vino', 'cerveza', 'una copa', 'tinto', 'blanco'], exampleEs: 'Una botella de agua y una copa de vino tinto.' },
+      { speaker: 'them', es: 'Perfecto. ¿Y para comer? ¿Han decidido?', en: 'Perfect. And to eat? Have you decided?' },
+      { speaker: 'you', hint: 'Ask what they recommend', expected: ['recomienda', 'qué recomienda', 'que recomienda', 'especialidad'], exampleEs: '¿Qué recomienda?' },
+      { speaker: 'them', es: 'El pescado del día está muy fresco. Y la paella es especialidad de la casa.', en: 'The catch of the day is very fresh. And the paella is our house special.' },
+      { speaker: 'you', hint: 'Order the fish / paella', expected: ['pescado', 'paella', 'yo tomo', 'para mí', 'para mi', 'la carne'], exampleEs: 'Yo tomo la paella, por favor.' },
+      { speaker: 'them', es: '¿Y de postre? Tenemos flan casero y tarta de queso.', en: 'And dessert? We have homemade flan and cheesecake.' },
+      { speaker: 'you', hint: 'Order a dessert — or decline and ask for the bill', expected: ['flan', 'tarta', 'no gracias', 'la cuenta', 'nada'], exampleEs: 'No, gracias. La cuenta, por favor.' },
+      { speaker: 'them', es: 'Aquí tienen. Gracias por su visita.', en: 'Here you are. Thanks for your visit.' },
+      { speaker: 'you', hint: 'Say it was delicious / thank you', expected: ['delicioso', 'estaba', 'gracias', 'muy bueno', 'buenísimo', 'buenisimo'], exampleEs: 'Muchas gracias. Estaba todo delicioso.' },
+    ],
+  },
+
+  {
+    id: 'direcciones', emoji: '🗺️', titleEs: 'Pedir direcciones', titleEn: 'Asking directions',
+    scenario: 'Estás perdido en Barcelona buscando la Sagrada Familia. Paras a alguien en la calle.',
+    vocab: [
+      { es: 'a la derecha', en: 'to the right' },
+      { es: 'a la izquierda', en: 'to the left' },
+      { es: 'todo recto', en: 'straight ahead' },
+      { es: 'la esquina', en: 'the corner' },
+      { es: 'cerca / lejos', en: 'near / far' },
+      { es: 'a pie', en: 'on foot' },
+    ],
+    phrases: [
+      { es: 'Perdona, ¿dónde está la Sagrada Familia?', en: 'Excuse me, where is the Sagrada Familia?' },
+      { es: '¿Está lejos de aquí?', en: 'Is it far from here?' },
+      { es: '¿Puedo ir a pie?', en: 'Can I walk there?' },
+      { es: 'Muchas gracias, muy amable.', en: 'Thank you, very kind.' },
+    ],
+    tip: 'With strangers, especially older ones, use "usted": "¿me puede decir…?" rather than the informal "¿me puedes decir…?"',
+    dialogue: [
+      { speaker: 'them', es: '¿Sí? Dime, ¿en qué te puedo ayudar?', en: 'Yes? Tell me, how can I help?' },
+      { speaker: 'you', hint: 'Ask where the Sagrada Familia is', expected: ['dónde está', 'donde esta', 'sagrada familia', 'busco', 'perdona'], exampleEs: 'Perdona, ¿dónde está la Sagrada Familia?' },
+      { speaker: 'them', es: 'A ver, sigue todo recto por esta calle.', en: 'Let\'s see, go straight along this street.' },
+      { speaker: 'you', hint: 'Say OK / I understand', expected: ['vale', 'entiendo', 'sí', 'si', 'todo recto', 'de acuerdo'], exampleEs: 'Vale, todo recto.' },
+      { speaker: 'them', es: 'Después de dos calles, giras a la derecha. La verás enfrente.', en: 'After two streets, turn right. You\'ll see it in front of you.' },
+      { speaker: 'you', hint: 'Ask if it\'s far / how long on foot', expected: ['lejos', 'está lejos', 'a pie', 'cuánto tarda', 'cuanto tarda', 'en cuánto', 'en cuanto'], exampleEs: '¿Está lejos? ¿Puedo ir a pie?' },
+      { speaker: 'them', es: 'A pie, unos quince minutos. No está lejos.', en: 'On foot, about fifteen minutes. It\'s not far.' },
+      { speaker: 'you', hint: 'Thank them warmly', expected: ['muchas gracias', 'gracias', 'muy amable', 'perfecto'], exampleEs: 'Muchas gracias, muy amable.' },
+    ],
+  },
+
+  {
+    id: 'hotel', emoji: '🏨', titleEs: 'En el hotel', titleEn: 'Hotel check-in',
+    scenario: 'Llegas a tu hotel en Valencia. Vas a recepción para hacer el check-in.',
+    vocab: [
+      { es: 'la reserva', en: 'the booking' },
+      { es: 'una habitación doble', en: 'a double room' },
+      { es: 'la llave / la tarjeta', en: 'key / keycard' },
+      { es: 'el desayuno', en: 'breakfast' },
+      { es: 'la contraseña del wifi', en: 'wifi password' },
+      { es: 'la factura', en: 'the invoice/receipt' },
+    ],
+    phrases: [
+      { es: 'Tengo una reserva a nombre de…', en: 'I have a booking under…' },
+      { es: '¿A qué hora es el desayuno?', en: 'What time is breakfast?' },
+      { es: '¿Cuál es la contraseña del wifi?', en: 'What\'s the wifi password?' },
+      { es: '¿Me da la factura, por favor?', en: 'Could you give me the invoice?' },
+    ],
+    tip: 'You\'ll be asked for your passport ("el pasaporte") at check-in — Spanish law requires it.',
+    dialogue: [
+      { speaker: 'them', es: 'Hola, buenas tardes. ¿En qué puedo ayudarle?', en: 'Hello, good afternoon. How can I help you?' },
+      { speaker: 'you', hint: 'Say you have a booking', expected: ['reserva', 'tengo una reserva', 'check', 'reservación', 'reservacion'], exampleEs: 'Tengo una reserva.' },
+      { speaker: 'them', es: 'Muy bien. ¿A qué nombre está?', en: 'Very well. Under what name?' },
+      { speaker: 'you', hint: 'Say your name (any name works)', expected: ['me llamo', 'a nombre de', 'kevin', 'soy', 'mi nombre'], exampleEs: 'A nombre de Kevin.' },
+      { speaker: 'them', es: 'Perfecto. ¿Me deja su pasaporte, por favor?', en: 'Perfect. May I have your passport, please?' },
+      { speaker: 'you', hint: 'Say here you go / sure', expected: ['aquí tiene', 'aqui tiene', 'sí', 'si', 'claro', 'por supuesto', 'toma'], exampleEs: 'Sí, aquí tiene.' },
+      { speaker: 'them', es: 'Gracias. Su habitación es la trescientos cinco. Aquí tiene la tarjeta.', en: 'Thank you. Your room is 305. Here\'s your keycard.' },
+      { speaker: 'you', hint: 'Ask about breakfast times', expected: ['desayuno', 'a qué hora', 'a que hora', 'wifi', 'contraseña', 'contrasena'], exampleEs: '¿A qué hora es el desayuno?' },
+      { speaker: 'them', es: 'De siete a diez. El wifi está en el reverso de la tarjeta.', en: 'Seven to ten. The wifi is on the back of the card.' },
+      { speaker: 'you', hint: 'Thank them', expected: ['gracias', 'muy amable', 'perfecto', 'muchas gracias'], exampleEs: 'Muchas gracias.' },
+    ],
+  },
+
+  {
+    id: 'farmacia', emoji: '💊', titleEs: 'En la farmacia', titleEn: 'At the pharmacy',
+    scenario: 'Llevas dos días con dolor de cabeza. Entras en una farmacia a pedir algo.',
+    vocab: [
+      { es: 'dolor de cabeza', en: 'headache' },
+      { es: 'dolor de garganta', en: 'sore throat' },
+      { es: 'fiebre', en: 'fever' },
+      { es: 'una receta', en: 'a prescription' },
+      { es: 'pastillas', en: 'pills' },
+      { es: 'con el estómago vacío', en: 'on an empty stomach' },
+    ],
+    phrases: [
+      { es: 'Tengo dolor de cabeza desde ayer.', en: 'I\'ve had a headache since yesterday.' },
+      { es: '¿Necesito receta?', en: 'Do I need a prescription?' },
+      { es: '¿Cuántas veces al día?', en: 'How many times a day?' },
+      { es: '¿Se toma con comida?', en: 'Do you take it with food?' },
+    ],
+    tip: 'Spanish pharmacists ("farmacéuticos") are highly trained and can advise on minor issues without a doctor visit.',
+    dialogue: [
+      { speaker: 'them', es: 'Hola, ¿qué necesita?', en: 'Hello, what do you need?' },
+      { speaker: 'you', hint: 'Say you have a headache', expected: ['dolor de cabeza', 'me duele la cabeza', 'tengo dolor', 'estoy mal'], exampleEs: 'Tengo dolor de cabeza.' },
+      { speaker: 'them', es: '¿Desde cuándo tiene el dolor?', en: 'How long have you had the pain?' },
+      { speaker: 'you', hint: 'Say since yesterday / two days', expected: ['ayer', 'dos días', 'dos dias', 'esta mañana', 'esta manana', 'hace', 'días'], exampleEs: 'Desde ayer.' },
+      { speaker: 'them', es: 'Entiendo. ¿Es alérgico a algún medicamento?', en: 'I see. Are you allergic to any medication?' },
+      { speaker: 'you', hint: 'Say no — or say penicillin', expected: ['no', 'no soy', 'no que yo sepa', 'penicilina', 'ninguno'], exampleEs: 'No, no soy alérgico.' },
+      { speaker: 'them', es: 'Perfecto. Le doy paracetamol. Una pastilla cada ocho horas.', en: 'Perfect. I\'ll give you paracetamol. One pill every eight hours.' },
+      { speaker: 'you', hint: 'Ask if you take it with food', expected: ['con comida', 'con o sin', 'estómago', 'estomago', 'vacío', 'vacio'], exampleEs: '¿Se toma con comida?' },
+      { speaker: 'them', es: 'Mejor con algo de comida. Son cinco euros con veinte.', en: 'Better with some food. That\'s five twenty.' },
+      { speaker: 'you', hint: 'Say here you go / thank you', expected: ['aquí tiene', 'aqui tiene', 'gracias', 'tarjeta', 'efectivo'], exampleEs: 'Aquí tiene. Gracias.' },
+    ],
+  },
+
+  {
+    id: 'mercado', emoji: '🍅', titleEs: 'En el mercado', titleEn: 'At the market',
+    scenario: 'Sábado por la mañana en el mercado. Vas a comprar fruta y verdura.',
+    vocab: [
+      { es: 'medio kilo', en: 'half a kilo' },
+      { es: 'un kilo', en: 'a kilo' },
+      { es: 'maduro / verde', en: 'ripe / unripe' },
+      { es: 'un poco más', en: 'a little more' },
+      { es: '¿algo más?', en: 'anything else?' },
+      { es: 'en efectivo', en: 'in cash' },
+    ],
+    phrases: [
+      { es: 'Me pone un kilo de tomates.', en: 'A kilo of tomatoes, please.' },
+      { es: '¿Están maduros?', en: 'Are they ripe?' },
+      { es: '¿A cuánto están las naranjas?', en: 'How much are the oranges?' },
+      { es: 'Nada más, gracias.', en: 'Nothing else, thanks.' },
+    ],
+    tip: '"Me pone" (literally "put me") is the polite way to order at a market — more natural than "quiero" (I want).',
+    dialogue: [
+      { speaker: 'them', es: '¡Hola, guapo! ¿Qué te pongo?', en: 'Hello handsome! What can I get you?' },
+      { speaker: 'you', hint: 'Order a kilo of tomatoes', expected: ['kilo de tomates', 'medio kilo', 'me pones', 'tomates', 'un kilo'], exampleEs: 'Un kilo de tomates, por favor.' },
+      { speaker: 'them', es: '¿Los quieres maduros para hoy o más verdes?', en: 'Do you want them ripe for today or greener?' },
+      { speaker: 'you', hint: 'Say ripe for today / for tomorrow', expected: ['maduros', 'para hoy', 'para mañana', 'para manana', 'sí', 'si', 'verdes'], exampleEs: 'Maduros, para hoy.' },
+      { speaker: 'them', es: 'Perfecto. ¿Algo más?', en: 'Perfect. Anything else?' },
+      { speaker: 'you', hint: 'Ask about oranges — or say nothing else', expected: ['naranjas', 'lechuga', 'plátanos', 'platanos', 'nada más', 'nada mas', 'a cuánto', 'a cuanto'], exampleEs: '¿A cuánto están las naranjas?' },
+      { speaker: 'them', es: 'A dos euros el kilo. ¿Te pongo?', en: 'Two euros a kilo. Shall I get some?' },
+      { speaker: 'you', hint: 'Say yes, half a kilo — or no thanks', expected: ['medio kilo', 'un kilo', 'sí', 'si', 'no gracias', 'ponme'], exampleEs: 'Sí, medio kilo.' },
+      { speaker: 'them', es: 'Muy bien. Son cuatro euros con cincuenta en total.', en: 'Very well. That\'s four fifty total.' },
+      { speaker: 'you', hint: 'Say here you go / thanks', expected: ['aquí tiene', 'aqui tiene', 'tarjeta', 'efectivo', 'toma', 'gracias'], exampleEs: 'Aquí tiene, gracias.' },
+    ],
+  },
+
+  {
+    id: 'cartera', emoji: '🚨', titleEs: 'Perdí mi cartera', titleEn: 'I lost my wallet',
+    scenario: 'Estás en la calle y te das cuenta de que no tienes la cartera. Vas a la comisaría a denunciarlo.',
+    vocab: [
+      { es: 'la cartera', en: 'the wallet' },
+      { es: 'denunciar', en: 'to report' },
+      { es: 'me la han robado', en: 'it was stolen from me' },
+      { es: 'el DNI / pasaporte', en: 'ID / passport' },
+      { es: 'la tarjeta de crédito', en: 'credit card' },
+      { es: 'una copia', en: 'a copy' },
+    ],
+    phrases: [
+      { es: 'Quiero denunciar la pérdida de mi cartera.', en: 'I want to report my lost wallet.' },
+      { es: 'La perdí esta mañana en el metro.', en: 'I lost it this morning on the metro.' },
+      { es: 'Tenía mi pasaporte dentro.', en: 'My passport was inside.' },
+      { es: '¿Me da una copia de la denuncia?', en: 'Can I get a copy of the report?' },
+    ],
+    tip: 'For insurance claims you\'ll need "la denuncia" — the official police report. Always ask for a copy.',
+    dialogue: [
+      { speaker: 'them', es: 'Buenos días. Dígame, ¿qué le ha pasado?', en: 'Good morning. Tell me, what happened?' },
+      { speaker: 'you', hint: 'Say you want to report a lost wallet', expected: ['perdí', 'perdi', 'me han robado', 'denunciar', 'mi cartera', 'la cartera'], exampleEs: 'Quiero denunciar la pérdida de mi cartera.' },
+      { speaker: 'them', es: 'Su cartera. ¿Dónde y cuándo la perdió?', en: 'Your wallet. Where and when did you lose it?' },
+      { speaker: 'you', hint: 'Say on the metro this morning', expected: ['metro', 'esta mañana', 'esta manana', 'ayer', 'autobús', 'autobus', 'la perdí', 'la perdi'], exampleEs: 'La perdí esta mañana en el metro.' },
+      { speaker: 'them', es: '¿Y qué llevaba dentro?', en: 'And what did you have inside?' },
+      { speaker: 'you', hint: 'Say passport, cards, money', expected: ['pasaporte', 'dinero', 'tarjetas', 'documentación', 'documentacion', 'llevaba'], exampleEs: 'Tenía mi pasaporte y las tarjetas.' },
+      { speaker: 'them', es: 'Entiendo. Su nombre completo, por favor.', en: 'I understand. Your full name, please.' },
+      { speaker: 'you', hint: 'Say your name', expected: ['me llamo', 'mi nombre', 'kevin', 'soy'], exampleEs: 'Me llamo Kevin.' },
+      { speaker: 'them', es: 'Muy bien. Le imprimo la denuncia ahora.', en: 'Very well. I\'ll print your report now.' },
+      { speaker: 'you', hint: 'Ask for a copy of the report', expected: ['una copia', 'copia', 'me da', 'gracias', 'la denuncia'], exampleEs: '¿Me da una copia, por favor?' },
+    ],
+  },
+
+  {
+    id: 'ropa', emoji: '👕', titleEs: 'Comprar ropa', titleEn: 'Buying clothes',
+    scenario: 'Ves una camiseta en el escaparate de una tienda. Entras a probártela.',
+    vocab: [
+      { es: 'la talla', en: 'the size' },
+      { es: 'el probador', en: 'the fitting room' },
+      { es: 'me queda bien / mal', en: 'it fits me well / badly' },
+      { es: 'más grande / pequeño', en: 'bigger / smaller' },
+      { es: 'de otro color', en: 'in another colour' },
+      { es: 'me lo llevo', en: 'I\'ll take it' },
+    ],
+    phrases: [
+      { es: '¿Tienen esta en talla M?', en: 'Do you have this in size M?' },
+      { es: '¿Dónde está el probador?', en: 'Where is the fitting room?' },
+      { es: 'Me queda un poco grande.', en: 'It\'s a bit big.' },
+      { es: 'Me lo llevo, gracias.', en: 'I\'ll take it, thanks.' },
+    ],
+    tip: 'Spanish clothing sizes are European (S, M, L or 38, 40, 42). Ask "¿tienen una talla más?" for the next size up.',
+    dialogue: [
+      { speaker: 'them', es: 'Hola, ¿te ayudo con algo?', en: 'Hi, can I help you with something?' },
+      { speaker: 'you', hint: 'Say you\'re looking for this shirt in size M', expected: ['esta camiseta', 'talla', 'busco', 'me gusta', 'la eme', 'mediana'], exampleEs: 'Busco esta camiseta en talla M.' },
+      { speaker: 'them', es: '¿Qué talla usas normalmente?', en: 'What size do you usually wear?' },
+      { speaker: 'you', hint: 'Say M / medium', expected: ['eme', 'talla m', 'mediana', 'ele', 'talla l', 'la eme'], exampleEs: 'La M, normalmente.' },
+      { speaker: 'them', es: 'Aquí la tienes. El probador está al fondo, a la izquierda.', en: 'Here it is. The fitting room is at the back, on the left.' },
+      { speaker: 'you', hint: 'Say thanks / I\'ll try it on', expected: ['gracias', 'perfecto', 'ahora vuelvo', 'voy a probármela', 'voy'], exampleEs: 'Gracias, ahora vuelvo.' },
+      { speaker: 'them', es: '¿Cómo te ha quedado?', en: 'How did it fit?' },
+      { speaker: 'you', hint: 'Say it fits well — you\'ll take it', expected: ['bien', 'me queda bien', 'grande', 'pequeña', 'pequena', 'me la llevo', 'me lo llevo'], exampleEs: 'Me queda bien. Me la llevo.' },
+      { speaker: 'them', es: 'Perfecto. Son veintitrés euros.', en: 'Perfect. That\'s twenty-three euros.' },
+      { speaker: 'you', hint: 'Pay by card / cash', expected: ['tarjeta', 'efectivo', 'aquí tiene', 'aqui tiene'], exampleEs: 'Con tarjeta, por favor.' },
+    ],
+  },
+
+  {
+    id: 'medico', emoji: '🩺', titleEs: 'En el médico', titleEn: 'At the doctor',
+    scenario: 'Llevas unos días con tos y no te encuentras bien. Vas al médico.',
+    vocab: [
+      { es: 'me duele…', en: 'my … hurts' },
+      { es: 'la tos', en: 'the cough' },
+      { es: 'estoy mareado/a', en: 'I feel dizzy' },
+      { es: 'desde hace…', en: 'for the past…' },
+      { es: 'alérgico/a a…', en: 'allergic to…' },
+      { es: 'reposo', en: 'rest' },
+    ],
+    phrases: [
+      { es: 'Me encuentro mal desde hace tres días.', en: 'I\'ve felt bad for three days.' },
+      { es: 'Me duele la garganta.', en: 'My throat hurts.' },
+      { es: 'Soy alérgico a la penicilina.', en: 'I\'m allergic to penicillin.' },
+      { es: '¿Necesito volver la semana que viene?', en: 'Do I need to come back next week?' },
+    ],
+    tip: 'The verb "doler" works like "gustar" — "me duele la cabeza" literally means "the head hurts to me".',
+    dialogue: [
+      { speaker: 'them', es: 'Buenos días. Cuénteme, ¿qué le ocurre?', en: 'Good morning. Tell me, what\'s wrong?' },
+      { speaker: 'you', hint: 'Say you have a cough / feel unwell', expected: ['tos', 'me duele', 'garganta', 'no me encuentro bien', 'estoy mal', 'fiebre'], exampleEs: 'Tengo tos y me duele la garganta.' },
+      { speaker: 'them', es: '¿Desde cuándo se encuentra así?', en: 'How long have you felt this way?' },
+      { speaker: 'you', hint: 'Say for three days / since yesterday', expected: ['tres días', 'tres dias', 'una semana', 'ayer', 'unos días', 'unos dias', 'desde hace'], exampleEs: 'Desde hace tres días.' },
+      { speaker: 'them', es: '¿Tiene fiebre? ¿Alergias?', en: 'Do you have a fever? Allergies?' },
+      { speaker: 'you', hint: 'Say no fever, no allergies (or the ones you have)', expected: ['no', 'sí', 'si', 'alérgico', 'alergico', 'no tengo', 'penicilina'], exampleEs: 'No tengo fiebre. No soy alérgico.' },
+      { speaker: 'them', es: 'Voy a auscultarle. Respire hondo. Muy bien, es una infección leve.', en: 'I\'ll listen to your chest. Breathe deep. Good, it\'s a mild infection.' },
+      { speaker: 'you', hint: 'Say OK / I understand', expected: ['vale', 'entiendo', 'de acuerdo', 'gracias', 'entiende'], exampleEs: 'Vale, entiendo.' },
+      { speaker: 'them', es: 'Le receto un antibiótico. Una cada ocho horas, siete días.', en: 'I\'ll prescribe an antibiotic. One every eight hours, for seven days.' },
+      { speaker: 'you', hint: 'Ask if you need to come back', expected: ['tengo que volver', 'volver', 'la semana', 'necesito', 'siete días', 'siete dias'], exampleEs: '¿Tengo que volver la semana que viene?' },
+    ],
+  },
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let state = {
+  view: 'home',        // 'home' | 'scene'
+  sceneId: null,
+  tab: 'lesson',       // 'lesson' | 'practice'
+  // practice-specific
+  step: 0,             // index into scene.dialogue
+  messages: [],        // rendered conversation
+  attempts: {},        // { step: attemptCount }
+  listening: false,
+  completed: false,
+  voiceInfo: '',
+};
+
+let voices = [];
+let recognition = null;
+let sttSupported = true;
+
+function setState(patch) {
+  Object.assign(state, patch);
+  render();
+}
+
+/* ============================================================
+   VOICE
+   ============================================================ */
+function loadVoices() {
+  if (!window.speechSynthesis) return;
+  const all = window.speechSynthesis.getVoices();
+  voices = all;
+  const es = all.filter(v => v.lang.toLowerCase().startsWith('es'));
+  if (es.length > 0) {
+    state.voiceInfo = `${es.length} Spanish voice${es.length > 1 ? 's' : ''} ready`;
+  } else if (all.length > 0) {
+    state.voiceInfo = 'No Spanish voice — using default';
+  }
+  const el = document.querySelector('.voice-status');
+  if (el) el.textContent = state.voiceInfo;
+}
+
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'es-ES';
+  u.rate = 0.92;
+  u.volume = 1;
+  const vs = voices.length ? voices : window.speechSynthesis.getVoices();
+  const esVoice = vs.find(v => v.lang.toLowerCase().startsWith('es'));
+  if (esVoice) u.voice = esVoice;
+  window.speechSynthesis.speak(u);
+}
+
+function setupRecognition() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { sttSupported = false; return; }
+  recognition = new SR();
+  recognition.lang = 'es-ES';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.onresult = (e) => {
+    const text = e.results[0][0].transcript;
+    handleSpokenInput(text);
+  };
+  recognition.onend = () => { state.listening = false; render(); };
+  recognition.onerror = () => { state.listening = false; render(); };
+}
+
+function startListening() {
+  if (!recognition) return;
+  setState({ listening: true });
+  try { recognition.start(); } catch { setState({ listening: false }); }
+}
+
+/* ============================================================
+   MATCHING — normalize + substring check
+   ============================================================ */
+function normalize(s) {
+  return String(s)
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')  // strip accents
+    .replace(/[¡¿?.,!;:"']/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function isMatch(spoken, expected) {
+  const n = normalize(spoken);
+  return expected.some(e => n.includes(normalize(e)));
+}
+
+/* ============================================================
+   DIALOGUE FLOW
+   ============================================================ */
+function currentScene() { return SCENES.find(s => s.id === state.sceneId); }
+
+function advanceToNextUserTurn() {
+  const scene = currentScene();
+  if (!scene) return;
+  // Push any consecutive 'them' turns until we hit a 'you' turn or end
+  while (state.step < scene.dialogue.length) {
+    const turn = scene.dialogue[state.step];
+    if (turn.speaker === 'them') {
+      state.messages.push({ role: 'assistant', spanish: turn.es, english: turn.en });
+      state.step++;
+      render();
+      speak(turn.es);
+      // Bot line is queued to speak; let user read while it plays.
+      break; // one bot line at a time
+    } else {
+      // it's a 'you' turn — just wait
+      render();
+      return;
+    }
+  }
+  if (state.step >= scene.dialogue.length) {
+    state.completed = true;
+    render();
+  }
+}
+
+function afterBotLineContinue() {
+  // Called manually if we want the next bot line after user responds.
+  const scene = currentScene();
+  if (!scene) return;
+  if (state.step >= scene.dialogue.length) {
+    state.completed = true;
+    render();
+    return;
+  }
+  const turn = scene.dialogue[state.step];
+  if (turn.speaker === 'them') {
+    state.messages.push({ role: 'assistant', spanish: turn.es, english: turn.en });
+    state.step++;
+    render();
+    speak(turn.es);
+    // After bot speaks, next is either another them (unlikely) or a you turn (wait)
+    const next = scene.dialogue[state.step];
+    if (!next) {
+      // done after this line — mark complete once utterance likely ended
+      setTimeout(() => { state.completed = true; render(); }, 1500);
+    }
+  }
+}
+
+function handleSpokenInput(text) {
+  const scene = currentScene();
+  if (!scene) return;
+  const turn = scene.dialogue[state.step];
+  if (!turn || turn.speaker !== 'you') return;
+
+  const matched = isMatch(text, turn.expected);
+  state.attempts[state.step] = (state.attempts[state.step] || 0) + 1;
+  state.messages.push({ role: 'user', spanish: text, matched, step: state.step });
+
+  if (matched) {
+    state.step++;
+    render();
+    afterBotLineContinue();
+  } else {
+    render();
+    // stay on same step — user can retry
+  }
+}
+
+function startPractice() {
+  state.step = 0;
+  state.messages = [];
+  state.attempts = {};
+  state.completed = false;
+  render();
+  // kick off first bot line
+  setTimeout(() => advanceToNextUserTurn(), 200);
+}
+
+function retryPractice() {
+  window.speechSynthesis?.cancel();
+  startPractice();
+}
+
+/* ============================================================
+   ICONS
+   ============================================================ */
+const iconBack = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
+const iconMic = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+const iconPlay = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+const iconSpeaker = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>';
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+function jsStr(s) { return JSON.stringify(s).replace(/"/g, '&quot;'); }
+
+function renderHome() {
+  return `
+    <div class="screen">
+      <header>
+        <div class="back-row">
+          <div>
+            <div class="brand">
+              <span class="brand-mark">¡</span>
+              <h1>Escenas</h1>
+              <span class="brand-mark">!</span>
+            </div>
+            <div class="brand-sub">Spanish, one scene at a time</div>
+          </div>
+          <button class="test-voice-btn" onclick="speak('Hola, ¿me oyes bien?')">Test voice</button>
+        </div>
+      </header>
+      <div class="home-body">
+        <p class="home-intro">Pick a moment from <em>everyday Spanish life</em>.</p>
+        <p class="home-sub">Learn the phrases, then practise the conversation out loud.</p>
+        <div class="grid">
+          ${SCENES.map((s, i) => `
+            <button class="card" onclick="openScene('${s.id}')">
+              <span class="card-num">${String(i + 1).padStart(2, '0')}</span>
+              <span class="card-emoji">${s.emoji}</span>
+              <div class="card-title-es">${esc(s.titleEs)}</div>
+              <div class="card-title-en">${esc(s.titleEn)}</div>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderScene() {
+  const scene = currentScene();
+  if (!scene) return renderHome();
+  return `
+    <div class="screen">
+      <header>
+        <div class="back-row">
+          <button class="icon-btn" onclick="goHome()" aria-label="Back">${iconBack}</button>
+          <span class="scene-emoji">${scene.emoji}</span>
+        </div>
+        <div class="scene-title">${esc(scene.titleEs)}</div>
+        <div class="scene-sub">${esc(scene.titleEn)}</div>
+      </header>
+      <div class="tabs">
+        <button class="tab ${state.tab === 'lesson' ? 'active' : ''}" onclick="setTab('lesson')">Lesson</button>
+        <button class="tab ${state.tab === 'practice' ? 'active' : ''}" onclick="setTab('practice')">Practice</button>
+      </div>
+      ${state.tab === 'lesson' ? renderLesson(scene) : renderPractice(scene)}
+    </div>
+  `;
+}
+
+function renderLesson(scene) {
+  return `
+    <div class="tab-body">
+      <div class="lesson-scenario">
+        <p>${esc(scene.scenario)}</p>
+      </div>
+      <div class="section-label">Vocabulary</div>
+      <ul class="vocab-list">
+        ${scene.vocab.map(v => `
+          <li class="vocab-item">
+            <div class="vocab-left">
+              <button class="vocab-play" onclick="speak(${jsStr(v.es)})" aria-label="Play">${iconPlay}</button>
+              <span class="vocab-es">${esc(v.es)}</span>
+            </div>
+            <span class="vocab-en">${esc(v.en)}</span>
+          </li>
+        `).join('')}
+      </ul>
+      <div class="section-label">Key phrases</div>
+      <div class="phrases-list">
+        ${scene.phrases.map(p => `
+          <div class="phrase-item">
+            <div class="phrase-text">
+              <div class="phrase-es">${esc(p.es)}</div>
+              <div class="phrase-en">${esc(p.en)}</div>
+            </div>
+            <button class="vocab-play" onclick="speak(${jsStr(p.es)})" aria-label="Play">${iconPlay}</button>
+          </div>
+        `).join('')}
+      </div>
+      ${scene.tip ? `
+        <div class="tip">
+          <div class="tip-label">Tip</div>
+          <div class="tip-text">${esc(scene.tip)}</div>
+        </div>
+      ` : ''}
+      <button class="start-practice" onclick="setTab('practice'); startPractice();">Practise this scene →</button>
+    </div>
+  `;
+}
+
+function renderPractice(scene) {
+  if (state.completed) return renderComplete(scene);
+
+  const currentTurn = scene.dialogue[state.step];
+  const isUserTurn = currentTurn && currentTurn.speaker === 'you';
+  const attempts = state.attempts[state.step] || 0;
+  const progress = Math.min(100, (state.step / scene.dialogue.length) * 100);
+
+  return `
+    <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+    <div class="tab-body" id="chat-body">
+      ${state.messages.length === 0 ? `
+        <div class="lesson-scenario">
+          <p>${esc(scene.scenario)}</p>
+        </div>
+      ` : ''}
+      ${state.messages.map((m, i) => renderMessage(m)).join('')}
+      ${isUserTurn ? `
+        <div class="turn-hint">
+          <div class="turn-hint-label">Your turn</div>
+          <div class="turn-hint-text">${esc(currentTurn.hint)}</div>
+          ${attempts >= 1 ? `
+            <div class="turn-hint-example">Try: <em>${esc(currentTurn.exampleEs)}</em>
+              <button class="vocab-play" style="display:inline-flex;margin-left:8px;vertical-align:middle;" onclick="speak(${jsStr(currentTurn.exampleEs)})" aria-label="Play example">${iconPlay}</button>
+            </div>
+          ` : ''}
+        </div>
+      ` : ''}
+    </div>
+    <div class="mic-bar">
+      <div class="voice-status">${esc(state.voiceInfo)}</div>
+      <button class="mic-btn ${state.listening ? 'listening' : ''}"
+              ${state.listening || !sttSupported || !isUserTurn ? 'disabled' : ''}
+              onclick="startListening()">
+        <span class="mic-dot">${iconMic}</span>
+        ${state.listening ? 'Listening…' : !sttSupported ? 'Voice not supported on this browser' : isUserTurn ? 'Speak Spanish' : 'Waiting…'}
+      </button>
+    </div>
+  `;
+}
+
+function renderMessage(m) {
+  if (m.role === 'user') {
+    const cls = m.matched ? 'matched' : 'miss';
+    return `
+      <div class="msg-row user">
+        <div class="bubble ${cls}">
+          <div class="bubble-text">${esc(m.spanish)}</div>
+          ${!m.matched ? `<div class="miss-tag">Try again</div>` : ''}
+        </div>
+      </div>
+    `;
+  }
+  return `
+    <div class="msg-row assistant">
+      <div class="bubble">
+        <div class="bubble-text">${esc(m.spanish)}</div>
+        <div class="bubble-actions">
+          <button class="bubble-btn" onclick="speak(${jsStr(m.spanish)})">${iconSpeaker} Play</button>
+          ${m.english ? `<button class="bubble-btn" onclick="this.parentElement.nextElementSibling.style.display='block';this.style.display='none';">Translate</button>` : ''}
+        </div>
+        ${m.english ? `<div class="bubble-tx" style="display:none;">${esc(m.english)}</div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function renderComplete(scene) {
+  const userTurns = scene.dialogue.filter(t => t.speaker === 'you').length;
+  let firstTry = 0, total = 0;
+  scene.dialogue.forEach((t, i) => {
+    if (t.speaker === 'you') {
+      total++;
+      if (state.attempts[i] === 1) firstTry++;
+    }
+  });
+  const pct = total > 0 ? (firstTry / total) : 0;
+  const stars = pct >= 0.9 ? 3 : pct >= 0.6 ? 2 : 1;
+  const totalAttempts = Object.values(state.attempts).reduce((a, b) => a + b, 0);
+
+  return `
+    <div class="complete-body">
+      <div class="complete-mark">✓</div>
+      <div class="complete-title">¡Escena completada!</div>
+      <div class="complete-sub">Scene complete</div>
+      <div class="stars">
+        <span class="star ${stars >= 1 ? 'on' : ''}">★</span>
+        <span class="star ${stars >= 2 ? 'on' : ''}">★</span>
+        <span class="star ${stars >= 3 ? 'on' : ''}">★</span>
+      </div>
+      <div class="score-detail">
+        <div class="score-row"><span>Phrases nailed first try</span><strong>${firstTry} / ${total}</strong></div>
+        <div class="score-row"><span>Total attempts</span><strong>${totalAttempts}</strong></div>
+      </div>
+      <div class="complete-actions">
+        <button class="btn-primary" onclick="retryPractice()">Practise again</button>
+        <button class="btn-secondary" onclick="goHome()">Back to scenes</button>
+      </div>
+    </div>
+  `;
+}
+
+function render() {
+  const app = document.getElementById('app');
+  app.innerHTML = state.view === 'home' ? renderHome() : renderScene();
+  const chat = document.getElementById('chat-body');
+  if (chat) chat.scrollTop = chat.scrollHeight;
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function openScene(id) {
+  setState({ view: 'scene', sceneId: id, tab: 'lesson', step: 0, messages: [], attempts: {}, completed: false });
+}
+function goHome() {
+  window.speechSynthesis?.cancel();
+  setState({ view: 'home', sceneId: null, step: 0, messages: [], attempts: {}, completed: false });
+}
+function setTab(t) {
+  setState({ tab: t });
+  // Kick off practice if switching in and nothing has started yet
+  if (t === 'practice' && state.messages.length === 0 && !state.completed) {
+    startPractice();
+  }
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+window.addEventListener('DOMContentLoaded', () => {
+  loadVoices();
+  if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged = loadVoices;
+  setupRecognition();
+  render();
+
+  // Register service worker for offline support
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW registration failed:', err));
+  }
+});
+</script>
+</body>
+</html>
